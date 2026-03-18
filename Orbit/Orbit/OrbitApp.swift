@@ -11,7 +11,7 @@ import SwiftUI
 struct OrbitApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AddTaskView()
         }
     }
 }
