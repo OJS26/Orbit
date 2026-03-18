@@ -11,7 +11,7 @@ struct TaskRowView: View {
             VStack(alignment: .leading) {
                 Text(task.name)
                     .font(.headline)
-                Text(task.recurrence.rawValue)
+                Text(task.isCompletedToday ? task.resetLabel : task.recurrence.rawValue)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -39,4 +39,7 @@ struct TaskRowView: View {
         }
     }
 }
-
+#Preview {
+    TaskRowView(task: Task(name: "Brush Teeth", recurrence: .daily))
+        .modelContainer(for: Task.self, inMemory: true)
+}

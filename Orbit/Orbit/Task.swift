@@ -3,19 +3,23 @@ import Foundation
 import SwiftData
 
 @Model
-class Task {
+class Task: Identifiable {
     var id: UUID
     var name: String
     var recurrence: Recurrence
     var completedDates: [TimeInterval]
-    var createdAt: Data
+    var createdAt: Date
+    var resetTime :Date
+    var targetCount: Int
     
-    init(name: String, recurrence: Recurrence) {
+    init(name: String, recurrence: Recurrence, resetTime: Date = Calendar.current.startOfDay(for: Date()), targetCount: Int = 1) {
         self.id = UUID()
         self.name = name
         self.recurrence = recurrence
         self.completedDates = []
-        self.createdAt = Data()
+        self.createdAt = Date()
+        self.resetTime = resetTime
+        self.targetCount = targetCount
     }
     
     enum Recurrence: String, Codable {
@@ -25,11 +29,56 @@ class Task {
         case monthly
     }
     
-    var isCompletedToday: Bool {
+    var completionsToday: Int {
         let calendar = Calendar.current
-        return completedDates.contains { interval in
-            let date = Date(timeIntervalSince1970: interval)
-            return calendar.isDateInToday(date)
+        return completedDates.filter { interval in
+            calendar.isDateInToday(Date(timeIntervalSince1970: interval))
+        }.count
+    }
+    
+    var isCompletedToday: Bool {
+       completionsToday >= targetCount
+    }
+    
+    var nextResetDate: Date {
+        let calendar = Calendar.current
+        let resetHour = calendar.component(.hour, from: resetTime)
+        let resetMinute = calendar.component(.minute, from: resetTime)
+        
+        switch recurrence {
+    case .daily:
+        var components = calendar.dateComponents([.year, .month, .day], from: Date())
+        components.hour = resetHour
+        components.minute = resetMinute
+        let todayReset = calendar.date(from: components)!
+        if Date() < todayReset {
+            return todayReset
+        } else {
+            return calendar.date(byAdding: .day, value: 1, to: todayReset)!
+        }
+        case .weekly:
+            return calendar.date(byAdding: .weekOfYear, value: 1, to: resetTime)!
+        case .biWeekly:
+            return calendar.date(byAdding: .weekOfYear, value: 1, to: resetTime)!
+        case .monthly:
+            return calendar.date(byAdding: .month, value: 1, to: resetTime)!
+        }
+    }
+    
+    var resetLabel: String {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        let timeString = formatter.string(from: nextResetDate)
+        
+        switch recurrence {
+        case .daily:
+            return "Resets at \(timeString) tomorrow"
+        case .weekly:
+            return "Resets \(nextResetDate.formatted(.dateTime.weekday(.wide))) at \(timeString)"
+        case .biWeekly:
+            return "Resets in 2 weeks at \(timeString)"
+        case .monthly:
+            return "Resets \(nextResetDate.formatted(.dateTime.month().day())) at \(timeString)"
         }
     }
 }

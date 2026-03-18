@@ -1,17 +1,14 @@
-//
-//  OrbitApp.swift
-//  Orbit
-//
-//  Created by OJ Strachan on 18/03/2026.
-//
+
 
 import SwiftUI
+import SwiftData
 
 @main
 struct OrbitApp: App {
     var body: some Scene {
         WindowGroup {
-            AddTaskView()
+            TaskListView()
         }
+        .modelContainer(for: Task.self)
     }
 }
