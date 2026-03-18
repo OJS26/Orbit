@@ -26,6 +26,9 @@ struct TaskListView: View {
                     .sheet(isPresented: $showingAddTask) {
                         AddTaskView()
                     }
+                    .onAppear {
+                        tasks.forEach { $0.resetIfNeeded() }
+                    }
         }
     }
 }

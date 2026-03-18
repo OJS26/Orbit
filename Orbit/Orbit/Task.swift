@@ -37,7 +37,7 @@ class Task: Identifiable {
     }
     
     var isCompletedToday: Bool {
-       completionsToday >= targetCount
+        completionsToday >= targetCount
     }
     
     var nextResetDate: Date {
@@ -46,16 +46,16 @@ class Task: Identifiable {
         let resetMinute = calendar.component(.minute, from: resetTime)
         
         switch recurrence {
-    case .daily:
-        var components = calendar.dateComponents([.year, .month, .day], from: Date())
-        components.hour = resetHour
-        components.minute = resetMinute
-        let todayReset = calendar.date(from: components)!
-        if Date() < todayReset {
-            return todayReset
-        } else {
-            return calendar.date(byAdding: .day, value: 1, to: todayReset)!
-        }
+        case .daily:
+            var components = calendar.dateComponents([.year, .month, .day], from: Date())
+            components.hour = resetHour
+            components.minute = resetMinute
+            let todayReset = calendar.date(from: components)!
+            if Date() < todayReset {
+                return todayReset
+            } else {
+                return calendar.date(byAdding: .day, value: 1, to: todayReset)!
+            }
         case .weekly:
             return calendar.date(byAdding: .weekOfYear, value: 1, to: resetTime)!
         case .biWeekly:
@@ -79,6 +79,41 @@ class Task: Identifiable {
             return "Resets in 2 weeks at \(timeString)"
         case .monthly:
             return "Resets \(nextResetDate.formatted(.dateTime.month().day())) at \(timeString)"
+        }
+    }
+    
+    func resetIfNeeded() {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        guard let lastCompletion = completedDates.max().map({Date(timeIntervalSince1970: $0) }) else { return }
+        
+        switch recurrence {
+        case .daily:
+            let resetHour = calendar.component(.hour, from: resetTime)
+            let resetMinute = calendar.component(.minute, from: resetTime)
+            var components = calendar.dateComponents([.year, .month, .day], from: now)
+            components.hour = resetHour
+            components.minute = resetMinute
+            let todayReset = calendar.date(from: components)!
+            if now >= todayReset && lastCompletion < todayReset {
+                completedDates.removeAll()
+            }
+        case .weekly:
+            let nextReset = calendar.date(byAdding: .weekOfYear, value: 1, to: resetTime)!
+            if now >= nextReset && lastCompletion < nextReset {
+                completedDates.removeAll()
+            }
+        case .biWeekly:
+            let nextReset = calendar.date(byAdding: .weekOfYear, value: 2, to: resetTime)!
+            if now >= nextReset && lastCompletion < nextReset {
+                completedDates.removeAll()
+            }
+        case .monthly:
+            let nextReset = calendar.date(byAdding: .month, value: 1, to: resetTime)!
+            if now >= nextReset && lastCompletion < nextReset {
+                completedDates.removeAll()
+            }
         }
     }
 }

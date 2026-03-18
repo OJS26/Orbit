@@ -8,6 +8,8 @@ struct AddTaskView: View {
     
     @State private var taskName = ""
     @State private var recurrence = Task.Recurrence.daily
+    @State private var resetTime = Calendar.current.startOfDay(for: Date())
+    @State private var targetCount = 1
     
     var body: some View {
         NavigationStack {
@@ -23,6 +25,14 @@ struct AddTaskView: View {
                         Text("Bi-Weekly").tag(Task.Recurrence.biWeekly)
                         Text("Monthly").tag(Task.Recurrence.monthly)
                     
+                    }
+                    
+                    Section("Reset Time") {
+                        DatePicker("Resets at", selection: $resetTime, displayedComponents: .hourAndMinute)
+                    }
+                    
+                    Section("Times per day") {
+                        Stepper("\(targetCount)x per \(recurrence.rawValue)", value: $targetCount, in: 1...10)
                     }
                     .pickerStyle(.segmented)
                 }
@@ -44,7 +54,7 @@ struct AddTaskView: View {
         }
     }
     func addTask() {
-        let task = Task(name: taskName, recurrence: recurrence)
+        let task = Task(name: taskName, recurrence: recurrence, resetTime: resetTime, targetCount: targetCount)
         modelContext.insert(task)
         dismiss()
     }

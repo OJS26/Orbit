@@ -21,9 +21,27 @@ struct TaskRowView: View {
             Button {
                 toggleComplete()
             } label: {
-                Image(systemName: task.isCompletedToday ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(task.isCompletedToday ? .green : .gray)
-                    .font(.title2)
+                if task.targetCount > 1 {
+                    ZStack {
+                        Circle()
+                            .fill(task.isCompletedToday ? .green : .gray.opacity(0.2))
+                            .frame(width: 36, height: 36)
+                        
+                        if task.isCompletedToday {
+                            Image(systemName: "checkmark")
+                                .foregroundStyle(.white)
+                                .font(.caption.bold())
+                        } else {
+                            Text("\(task.completionsToday)/\(task.targetCount)")
+                                .foregroundStyle(.primary)
+                                .font(.caption.bold())
+                        }
+                    }
+                } else {
+                    Image(systemName: task.isCompletedToday ? "checkmark.circle.fill" : "circle")
+                        .foregroundStyle(task.isCompletedToday ? .green : .gray)
+                        .font(.title2)
+                }
             }
         }
         .padding(.vertical, 4)
