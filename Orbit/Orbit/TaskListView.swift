@@ -12,6 +12,9 @@ struct TaskListView: View {
                 Color("SpaceBackground")
                     .ignoresSafeArea()
                 
+                StarfieldView()
+                    .ignoresSafeArea()
+                
                 VStack(spacing: 0) {
                     HeaderView(
                         totalTasks: tasks.count,
