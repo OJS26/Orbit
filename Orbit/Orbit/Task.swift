@@ -11,6 +11,7 @@ class Task: Identifiable {
     var createdAt: Date
     var resetTime :Date
     var targetCount: Int
+    var streak: Int
     
     init(name: String, recurrence: Recurrence, resetTime: Date = Calendar.current.startOfDay(for: Date()), targetCount: Int = 1) {
         self.id = UUID()
@@ -20,6 +21,7 @@ class Task: Identifiable {
         self.createdAt = Date()
         self.resetTime = resetTime
         self.targetCount = targetCount
+        self.streak = 0
     }
     
     enum Recurrence: String, Codable {
@@ -97,21 +99,25 @@ class Task: Identifiable {
             components.minute = resetMinute
             let todayReset = calendar.date(from: components)!
             if now >= todayReset && lastCompletion < todayReset {
+                streak = isCompletedToday ? streak + 1 : 0
                 completedDates.removeAll()
             }
         case .weekly:
             let nextReset = calendar.date(byAdding: .weekOfYear, value: 1, to: resetTime)!
             if now >= nextReset && lastCompletion < nextReset {
+                streak = isCompletedToday ? streak + 1 : 0
                 completedDates.removeAll()
             }
         case .biWeekly:
             let nextReset = calendar.date(byAdding: .weekOfYear, value: 2, to: resetTime)!
             if now >= nextReset && lastCompletion < nextReset {
+                streak = isCompletedToday ? streak + 1 : 0
                 completedDates.removeAll()
             }
         case .monthly:
             let nextReset = calendar.date(byAdding: .month, value: 1, to: resetTime)!
             if now >= nextReset && lastCompletion < nextReset {
+                streak = isCompletedToday ? streak + 1 : 0
                 completedDates.removeAll()
             }
         }

@@ -14,6 +14,11 @@ struct TaskRowView: View {
                 Text(task.isCompletedToday ? task.resetLabel : task.recurrence.rawValue)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                if task.streak > 0 {
+                    Text("🔥 \(task.streak) day streak")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                }
             }
             
             Spacer()
