@@ -1,4 +1,3 @@
-
 import SwiftUI
 import SwiftData
 
@@ -8,12 +7,13 @@ struct TaskRowView: View {
     
     var body: some View {
         HStack {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(task.name)
                     .font(.headline)
-                Text(task.isCompletedToday ? task.resetLabel : task.recurrence.rawValue)
+                    .foregroundStyle(.white)
+                Text(task.isCompletedToday ? task.resetLabel : task.recurrence.rawValue.capitalized)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color("MutedLavender"))
                 if task.streak > 0 {
                     Text("🔥 \(task.streak) day streak")
                         .font(.caption)
@@ -29,27 +29,42 @@ struct TaskRowView: View {
                 if task.targetCount > 1 {
                     ZStack {
                         Circle()
-                            .fill(task.isCompletedToday ? .green : .gray.opacity(0.2))
+                            .fill(task.isCompletedToday ? Color("CometGreen") : Color("CardBackground"))
                             .frame(width: 36, height: 36)
-                        
+                        Circle()
+                            .strokeBorder(task.isCompletedToday ? Color("CometGreen") : Color("AccentPurple"), lineWidth: 1.5)
+                            .frame(width: 36, height: 36)
                         if task.isCompletedToday {
                             Image(systemName: "checkmark")
                                 .foregroundStyle(.white)
                                 .font(.caption.bold())
                         } else {
                             Text("\(task.completionsToday)/\(task.targetCount)")
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(Color("MutedLavender"))
                                 .font(.caption.bold())
                         }
                     }
                 } else {
-                    Image(systemName: task.isCompletedToday ? "checkmark.circle.fill" : "circle")
-                        .foregroundStyle(task.isCompletedToday ? .green : .gray)
-                        .font(.title2)
+                    ZStack {
+                        Circle()
+                            .fill(task.isCompletedToday ? Color("CometGreen") : Color("CardBackground"))
+                            .frame(width: 36, height: 36)
+                        Circle()
+                            .strokeBorder(task.isCompletedToday ? Color("CometGreen") : Color("AccentPurple"), lineWidth: 1.5)
+                            .frame(width: 36, height: 36)
+                        if task.isCompletedToday {
+                            Image(systemName: "checkmark")
+                                .foregroundStyle(.white)
+                                .font(.caption.bold())
+                        }
+                    }
                 }
             }
+            .buttonStyle(.plain)
         }
-        .padding(.vertical, 4)
+        .padding()
+        .background(Color("CardBackground"))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
     
     func toggleComplete() {
@@ -62,7 +77,10 @@ struct TaskRowView: View {
         }
     }
 }
+
 #Preview {
     TaskRowView(task: Task(name: "Brush Teeth", recurrence: .daily))
         .modelContainer(for: Task.self, inMemory: true)
+        .padding()
+        .background(Color("SpaceBackground"))
 }
