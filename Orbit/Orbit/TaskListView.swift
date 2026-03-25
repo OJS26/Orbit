@@ -1,3 +1,5 @@
+
+
 import SwiftUI
 import SwiftData
 
@@ -16,10 +18,8 @@ struct TaskListView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    HeaderView(
-                        totalTasks: tasks.count,
-                        completedTasks: tasks.filter { $0.isCompletedToday }.count
-                    )
+                    HeaderView(tasks: tasks)
+                        
                     .padding(.top, 8)
                     
                     List {

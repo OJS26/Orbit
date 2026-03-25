@@ -11,7 +11,7 @@ struct Star: Identifiable {
 }
 
 struct StarfieldView: View {
-    let stars: [Star] = (0..<80).map { _ in
+    @State private var stars: [Star] = (0..<80).map { _ in
         Star(
             x: Double.random(in: 0...1),
             y: Double.random(in: 0...1),

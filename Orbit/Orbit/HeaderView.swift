@@ -1,9 +1,26 @@
-
 import SwiftUI
+import SwiftData
 
 struct HeaderView: View {
-    let totalTasks: Int
-    let completedTasks: Int
+    let tasks: [Task]
+    
+    var totalProgress: Double {
+        tasks.reduce(0.0) { $0 + min(Double($1.completionsToday) / Double($1.targetCount), 1.0) }
+    }
+    
+    var progress: Double {
+        guard !tasks.isEmpty else { return 0 }
+        return totalProgress / Double(tasks.count)
+    }
+    
+    var progressText: String {
+        let completed = totalProgress
+        let total = Double(tasks.count)
+        if completed == total {
+            return "All tasks complete 🎉"
+        }
+        return String(format: "%.1f of %d tasks complete", completed, tasks.count)
+    }
     
     var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -14,9 +31,30 @@ struct HeaderView: View {
         }
     }
     
-    var progress: Double {
-        guard totalTasks > 0 else { return 0 }
-        return Double(completedTasks) / Double(totalTasks)
+    var progressRing: some View {
+        ZStack {
+            Circle()
+                .stroke(Color("CardBackground"), lineWidth: 6)
+                .frame(width: 60, height: 60)
+            
+            Circle()
+                .trim(from: 0, to: progress)
+                .stroke(
+                    LinearGradient(
+                        colors: [Color("AccentPurple"), Color("NebulaBlue")],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    style: StrokeStyle(lineWidth: 6, lineCap: .round)
+                )
+                .frame(width: 60, height: 60)
+                .rotationEffect(.degrees(-90))
+                .animation(.easeInOut, value: progress)
+            
+            Text("\(Int(progress * 100))%")
+                .font(.caption.bold())
+                .foregroundStyle(.white)
+        }
     }
     
     var body: some View {
@@ -25,36 +63,15 @@ struct HeaderView: View {
                 Text(greeting)
                     .font(.title2.bold())
                     .foregroundStyle(.white)
-                Text("\(completedTasks) of \(totalTasks) tasks complete")
+                Text(progressText)
                     .font(.caption)
                     .foregroundStyle(Color("MutedLavender"))
             }
             
             Spacer()
             
-            ZStack {
-                Circle()
-                    .stroke(Color("CardBackground"), lineWidth: 6)
-                    .frame(width: 60, height: 60)
-                
-                Circle()
-                    .trim(from: 0, to: progress)
-                    .stroke(
-                        LinearGradient(
-                            colors: [Color("AccentPurple"), Color("NebulaBlue")],
-                            startPoint: .leading,
-                            endPoint: .bottomTrailing
-                    ),
-                        style: StrokeStyle(lineWidth: 6, lineCap: .round)
-                )
-                .frame(width: 60, height: 60)
-                .rotationEffect(.degrees(-90))
-                .animation(.easeIn, value: progress)
-                
-                Text("\(Int(progress * 100))%")
-                    .font(.caption.bold())
-                    .foregroundStyle(.white)
-            }
+            progressRing
+            
         }
         .padding()
         .background(Color("CardBackground"))
@@ -66,8 +83,9 @@ struct HeaderView: View {
         .padding(.horizontal)
     }
 }
+
 #Preview {
-    HeaderView(totalTasks: 5, completedTasks: 3)
+    HeaderView(tasks: [])
         .padding()
         .background(Color("SpaceBackground"))
 }
