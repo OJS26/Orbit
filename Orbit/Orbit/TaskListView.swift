@@ -1,5 +1,3 @@
-
-
 import SwiftUI
 import SwiftData
 
@@ -7,6 +5,15 @@ struct TaskListView: View {
     @Query private var tasks: [Task]
     @Environment(\.modelContext) private var modelContext
     @State private var showingAddTask = false
+    
+    var sortedTasks: [Task] {
+        tasks.sorted { first, second in
+            if first.isCompletedToday == second.isCompletedToday {
+                return first.createdAt < second.createdAt
+            }
+            return !first.isCompletedToday && second.isCompletedToday
+        }
+    }
     
     var body: some View {
         NavigationStack {
@@ -19,25 +26,39 @@ struct TaskListView: View {
                 
                 VStack(spacing: 0) {
                     HeaderView(tasks: tasks)
-                        
-                    .padding(.top, 8)
+                        .padding(.top, 8)
                     
-                    List {
-                        ForEach(tasks) { task in
-                            TaskRowView(task: task)
-                                .listRowBackground(Color.clear)
-                                .listRowSeparator(.hidden)
-                                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                    if tasks.isEmpty {
+                        EmptyStateView()
+                    } else {
+                        List {
+                            ForEach(sortedTasks) { task in
+                                TaskRowView(task: task)
+                                    .listRowBackground(Color.clear)
+                                    .listRowSeparator(.hidden)
+                                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                            }
+                            .onDelete(perform: deleteTasks)
                         }
-                        .onDelete(perform: deleteTasks)
+                        .listStyle(.plain)
+                        .scrollContentBackground(.hidden)
+                        .animation(.easeInOut(duration: 0.4), value: sortedTasks.map { $0.isCompletedToday })
                     }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
                 }
             }
-            .navigationTitle("Orbit")
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    HStack(spacing: 8) {
+                        Image("NSUStar")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 24)
+                        Text("Orbit")
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showingAddTask = true
@@ -55,7 +76,7 @@ struct TaskListView: View {
     
     func deleteTasks(at offsets: IndexSet) {
         for index in offsets {
-            modelContext.delete(tasks[index])
+            modelContext.delete(sortedTasks[index])
         }
     }
 }
