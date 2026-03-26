@@ -76,6 +76,7 @@ struct TaskListView: View {
     
     func deleteTasks(at offsets: IndexSet) {
         for index in offsets {
+            NotificationManager.shared.removeNotification(for: sortedTasks[index])
             modelContext.delete(sortedTasks[index])
         }
     }

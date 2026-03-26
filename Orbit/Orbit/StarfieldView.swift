@@ -3,7 +3,7 @@
 import SwiftUI
 
 struct Star: Identifiable {
-    let id = UUID()
+    let id: Int
     let x: Double
     let y: Double
     let size: Double
@@ -11,16 +11,16 @@ struct Star: Identifiable {
 }
 
 struct StarfieldView: View {
-    @State private var stars: [Star] = (0..<80).map { _ in
-        Star(
-            x: Double.random(in: 0...1),
-            y: Double.random(in: 0...1),
-            size: Double.random(in: 1...3),
-            opacity: Double.random(in: 0.1...0.8)
+    let stars: [Star] = (0..<80).map { i in
+        var gen = SeededRandomGenerator(seed: UInt64(i * 1234567))
+        return Star(
+            id: i,
+            x: Double.random(in: 0...1, using: &gen),
+            y: Double.random(in: 0...1, using: &gen),
+            size: Double.random(in: 1...3, using: &gen),
+            opacity: Double.random(in: 0.1...0.8, using: &gen)
         )
     }
-    
-    @State private var twinkle = false
     
     var body: some View {
         GeometryReader { geo in
@@ -33,17 +33,19 @@ struct StarfieldView: View {
                             x: star.x * geo.size.width,
                             y: star.y * geo.size.height
                         )
-                        .opacity(twinkle ? star.opacity : star.opacity * 0.3)
-                        .animation(
-                            .easeInOut(duration: Double.random(in: 1.5...3.0))
-                            .repeatForever(autoreverses: true)
-                            .delay(Double.random(in: 0...2)),
-                            value: twinkle
-                        )
+                        .opacity(star.opacity)
                 }
             }
-            .onAppear { twinkle = true }
         }
+    }
+}
+
+struct SeededRandomGenerator: RandomNumberGenerator {
+    var seed: UInt64
+    
+    mutating func next() -> UInt64 {
+        seed = seed &* 6364136223846793005 &+ 1442695040888963407
+        return seed
     }
 }
 

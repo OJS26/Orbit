@@ -29,7 +29,6 @@ struct EditTaskView: View {
                 ScrollView {
                     VStack(spacing: 16) {
                         
-                        // Task Name
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Task Name")
                                 .font(.caption.bold())
@@ -45,7 +44,6 @@ struct EditTaskView: View {
                                 )
                         }
                         
-                        // Recurrence
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Repeats")
                                 .font(.caption.bold())
@@ -60,7 +58,6 @@ struct EditTaskView: View {
                             .tint(Color("AccentPurple"))
                         }
                         
-                        // Reset Time
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Reset Time")
                                 .font(.caption.bold())
@@ -77,7 +74,6 @@ struct EditTaskView: View {
                                 )
                         }
                         
-                        // Target Count
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Times Per Period")
                                 .font(.caption.bold())
@@ -121,7 +117,6 @@ struct EditTaskView: View {
                             )
                         }
                         
-                        // Save Button
                         Button {
                             saveTask()
                         } label: {
@@ -157,6 +152,7 @@ struct EditTaskView: View {
         task.recurrence = recurrence
         task.resetTime = resetTime
         task.targetCount = targetCount
+        NotificationManager.shared.scheduleNotification(for: task)
         dismiss()
     }
 }

@@ -145,6 +145,7 @@ struct AddTaskView: View {
     func addTask() {
         let task = Task(name: taskName, recurrence: recurrence, resetTime: resetTime, targetCount: targetCount)
         modelContext.insert(task)
+        NotificationManager.shared.scheduleNotification(for: task)
         dismiss()
     }
 }
