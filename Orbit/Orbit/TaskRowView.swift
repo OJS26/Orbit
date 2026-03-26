@@ -6,6 +6,7 @@ struct TaskRowView: View {
     let task: Task
     @State private var showBurst = false
     @State private var particles: [(id: UUID, angle: Double, distance: Double)] = []
+    @State private var showingEditTask = false
     
     var burstParticles: some View {
         ForEach(particles, id: \.id) { particle in
@@ -60,6 +61,7 @@ struct TaskRowView: View {
                         .font(.caption)
                         .foregroundStyle(.orange)
                 }
+                   
             }
             
             Spacer()
@@ -78,6 +80,12 @@ struct TaskRowView: View {
         .background(Color("CardBackground"))
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .shadow(color: task.isCompletedToday ? Color("CometGreen").opacity(0.3) : Color("AccentPurple").opacity(0.3), radius: 8, x: 0, y: 4)
+        .onTapGesture {
+            showingEditTask = true
+        }
+        .sheet(isPresented: $showingEditTask) {
+            EditTaskView(task: task)
+        }
     }
     
     func toggleComplete() {
