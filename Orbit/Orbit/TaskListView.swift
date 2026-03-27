@@ -1,5 +1,8 @@
+
+
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 struct TaskListView: View {
     @Query private var tasks: [Task]
@@ -47,10 +50,12 @@ struct TaskListView: View {
                             tasks.forEach { $0.resetIfNeeded() }
                             let widgetData = tasks.map { TaskWidgetData(name: $0.name, isCompleted: $0.isCompletedToday) }
                             SharedDataManager.shared.saveTasks(widgetData)
+                            WidgetCenter.shared.reloadAllTimelines()
                         }
                         .onChange(of: tasks.map { $0.isCompletedToday }) {
                             let widgetData = tasks.map { TaskWidgetData(name: $0.name, isCompleted: $0.isCompletedToday) }
                             SharedDataManager.shared.saveTasks(widgetData)
+                            WidgetCenter.shared.reloadAllTimelines()
                         }
                         .listStyle(.plain)
                         .scrollContentBackground(.hidden)
