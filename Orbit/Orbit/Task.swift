@@ -11,9 +11,10 @@ class Task: Identifiable {
     var createdAt: Date
     var resetTime :Date
     var targetCount: Int
+    var notificationTimes: [TimeInterval]
     var streak: Int
     
-    init(name: String, recurrence: Recurrence, resetTime: Date = Calendar.current.startOfDay(for: Date()), targetCount: Int = 1) {
+    init(name: String, recurrence: Recurrence, resetTime: Date = Calendar.current.startOfDay(for: Date()), targetCount: Int = 1, notificationTimes: [TimeInterval] = []) {
         self.id = UUID()
         self.name = name
         self.recurrence = recurrence
@@ -21,6 +22,7 @@ class Task: Identifiable {
         self.createdAt = Date()
         self.resetTime = resetTime
         self.targetCount = targetCount
+        self.notificationTimes = notificationTimes
         self.streak = 0
     }
     

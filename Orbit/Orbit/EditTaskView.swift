@@ -11,6 +11,8 @@ struct EditTaskView: View {
     @State private var recurrence: Task.Recurrence
     @State private var resetTime: Date
     @State private var targetCount: Int
+    @State private var notificationCount: Int
+    @State private var notificationTimes: [Date]
     
     init(task: Task) {
         self.task = task
@@ -18,6 +20,8 @@ struct EditTaskView: View {
         _recurrence = State(initialValue: task.recurrence)
         _resetTime = State(initialValue: task.resetTime)
         _targetCount = State(initialValue: task.targetCount)
+        _notificationCount = State(initialValue: task.notificationTimes.count)
+        _notificationTimes = State(initialValue: task.notificationTimes.isEmpty ? [Date()] : task.notificationTimes.map { Date(timeIntervalSince1970: $0) })
     }
     
     var body: some View {
@@ -117,6 +121,79 @@ struct EditTaskView: View {
                             )
                         }
                         
+                        // Notification Times
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Reminders")
+                                .font(.caption.bold())
+                                .foregroundStyle(Color("MutedLavender"))
+                            
+                            // How many reminders
+                            HStack {
+                                Text("\(notificationCount) reminder\(notificationCount > 1 ? "s" : "")")
+                                    .foregroundStyle(.white)
+                                Spacer()
+                                HStack(spacing: 0) {
+                                    Button {
+                                        if notificationCount > 1 {
+                                            notificationCount -= 1
+                                            notificationTimes.removeLast()
+                                        }
+                                    } label: {
+                                        Image(systemName: "minus")
+                                            .frame(width: 36, height: 36)
+                                            .foregroundStyle(Color("AccentPurple"))
+                                    }
+                                    Text("\(notificationCount)")
+                                        .frame(width: 36)
+                                        .foregroundStyle(.white)
+                                    Button {
+                                        if notificationCount < targetCount {
+                                            notificationCount += 1
+                                            notificationTimes.append(Date())
+                                        }
+                                    } label: {
+                                        Image(systemName: "plus")
+                                            .frame(width: 36, height: 36)
+                                            .foregroundStyle(Color("AccentPurple"))
+                                    }
+                                }
+                                .background(Color("CardBackground"))
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .strokeBorder(Color("AccentPurple").opacity(0.5), lineWidth: 1)
+                                )
+                            }
+                            .padding()
+                            .background(Color("CardBackground"))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .strokeBorder(Color("AccentPurple").opacity(0.5), lineWidth: 1)
+                            )
+                            
+                            // Time pickers for each reminder
+                            ForEach(0..<notificationCount, id: \.self) { index in
+                                DatePicker(
+                                    "Reminder \(index + 1)",
+                                    selection: Binding(
+                                        get: { notificationTimes[index] },
+                                        set: { notificationTimes[index] = $0 }
+                                    ),
+                                    displayedComponents: .hourAndMinute
+                                )
+                                .padding()
+                                .background(Color("CardBackground"))
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .foregroundStyle(.white)
+                                .tint(Color("AccentPurple"))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .strokeBorder(Color("AccentPurple").opacity(0.5), lineWidth: 1)
+                                )
+                            }
+                        }
+                        
                         Button {
                             saveTask()
                         } label: {
@@ -148,10 +225,12 @@ struct EditTaskView: View {
     }
     
     func saveTask() {
+        let times = notificationTimes.prefix(notificationCount).map { $0.timeIntervalSince1970 }
         task.name = taskName
         task.recurrence = recurrence
-        task.resetTime = resetTime
+        task.resetTime = notificationTimes.first ?? Date()
         task.targetCount = targetCount
+        task.notificationTimes = Array(times)
         NotificationManager.shared.scheduleNotification(for: task)
         dismiss()
     }
