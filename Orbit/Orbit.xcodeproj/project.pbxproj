@@ -52,11 +52,21 @@
 			);
 			target = 2F3604892F6C0B4C001D2BF9 /* OrbitWidgetExtension */;
 		};
+		2F7A758E2F76DAAC00337F1F /* Exceptions for "Orbit" folder in "OrbitWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				SharedDataManager.swift,
+			);
+			target = 2F3604892F6C0B4C001D2BF9 /* OrbitWidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		2F3604592F6AC55C001D2BF9 /* Orbit */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2F7A758E2F76DAAC00337F1F /* Exceptions for "Orbit" folder in "OrbitWidgetExtension" target */,
+			);
 			path = Orbit;
 			sourceTree = "<group>";
 		};

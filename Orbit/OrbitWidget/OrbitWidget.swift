@@ -34,8 +34,9 @@ struct Provider: TimelineProvider {
     }
     
     func loadTasks() -> [TaskSnapshot] {
-        
-        return []
+        return SharedDataManager.shared.loadTasks().map {
+            TaskSnapshot(name: $0.name, isCompleted: $0.isCompleted)
+        }
     }
 }
 

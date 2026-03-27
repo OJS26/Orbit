@@ -43,6 +43,18 @@ struct TaskListView: View {
                         .listStyle(.plain)
                         .scrollContentBackground(.hidden)
                         .animation(.easeInOut(duration: 0.4), value: sortedTasks.map { $0.isCompletedToday })
+                        .onAppear {
+                            tasks.forEach { $0.resetIfNeeded() }
+                            let widgetData = tasks.map { TaskWidgetData(name: $0.name, isCompleted: $0.isCompletedToday) }
+                            SharedDataManager.shared.saveTasks(widgetData)
+                        }
+                        .onChange(of: tasks.map { $0.isCompletedToday }) {
+                            let widgetData = tasks.map { TaskWidgetData(name: $0.name, isCompleted: $0.isCompletedToday) }
+                            SharedDataManager.shared.saveTasks(widgetData)
+                        }
+                        .listStyle(.plain)
+                        .scrollContentBackground(.hidden)
+                        .animation(.easeInOut(duration: 0.4), value: sortedTasks.map { $0.isCompletedToday })
                     }
                 }
             }
