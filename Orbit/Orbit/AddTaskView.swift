@@ -11,6 +11,11 @@ struct AddTaskView: View {
     @State private var targetCount = 1
     @State private var notificationCount = 1
     @State private var notificationTimes: [Date] = [Date()]
+    @State private var emoji: String = ""
+    @State private var customInterval: Int = 1
+    @State private var customUnit: String = "days"
+    @State private var customWeekdays: [Int] = []
+    @State private var customDayOfMonth: Int = 1
     
     var body: some View {
         NavigationStack {
@@ -26,15 +31,35 @@ struct AddTaskView: View {
                             Text("Task Name")
                                 .font(.caption.bold())
                                 .foregroundStyle(Color("MutedLavender"))
-                            TextField("e.g. Brush Teeth", text: $taskName)
-                                .padding()
-                                .background(Color("CardBackground"))
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                                .foregroundStyle(.white)
+                            HStack(spacing: 0) {
+                                Button {
+                                    emoji = ""
+                                } label: {
+                                    EmojiTextField(text: $emoji)
+                                        .frame(width: 52, height: 52)
+                                        .background(Color("SpaceBackground"))
+                                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .strokeBorder(Color("AccentPurple").opacity(0.5), lineWidth: 1)
+                                        )
+                                }
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
                                         .strokeBorder(Color("AccentPurple").opacity(0.5), lineWidth: 1)
                                 )
+                                
+                                TextField("e.g. Brush Teeth", text: $taskName)
+                                    .padding()
+                                    .frame(height: 52)
+                                    .background(Color("CardBackground"))
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    .foregroundStyle(.white)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .strokeBorder(Color("AccentPurple").opacity(0.5), lineWidth: 1)
+                                    )
+                            }
                         }
                         
                         // Recurrence
@@ -42,14 +67,134 @@ struct AddTaskView: View {
                             Text("Repeats")
                                 .font(.caption.bold())
                                 .foregroundStyle(Color("MutedLavender"))
+                            
                             Picker("Recurrence", selection: $recurrence) {
                                 Text("Daily").tag(Task.Recurrence.daily)
                                 Text("Weekly").tag(Task.Recurrence.weekly)
                                 Text("Bi-Weekly").tag(Task.Recurrence.biWeekly)
                                 Text("Monthly").tag(Task.Recurrence.monthly)
+                                Text("Yearly").tag(Task.Recurrence.yearly)
+                                Text("Custom").tag(Task.Recurrence.custom)
                             }
-                            .pickerStyle(.segmented)
+                            .pickerStyle(.menu)
                             .tint(Color("AccentPurple"))
+                            .padding()
+                            .background(Color("CardBackground"))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .strokeBorder(Color("AccentPurple").opacity(0.5), lineWidth: 1)
+                            )
+                            
+                            if recurrence == .custom {
+                                VStack(spacing: 12) {
+                                    // Every X stepper
+                                    HStack {
+                                        Text("Every")
+                                            .foregroundStyle(.white)
+                                        Spacer()
+                                        HStack(spacing: 0) {
+                                            Button {
+                                                if customInterval > 1 { customInterval -= 1 }
+                                            } label: {
+                                                Image(systemName: "minus")
+                                                    .frame(width: 36, height: 36)
+                                                    .foregroundStyle(Color("AccentPurple"))
+                                            }
+                                            Text("\(customInterval)")
+                                                .frame(width: 36)
+                                                .foregroundStyle(.white)
+                                            Button {
+                                                customInterval += 1
+                                            } label: {
+                                                Image(systemName: "plus")
+                                                    .frame(width: 36, height: 36)
+                                                    .foregroundStyle(Color("AccentPurple"))
+                                            }
+                                        }
+                                        .background(Color("CardBackground"))
+                                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .strokeBorder(Color("AccentPurple").opacity(0.5), lineWidth: 1)
+                                        )
+                                    }
+                                    .padding()
+                                    .background(Color("CardBackground"))
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .strokeBorder(Color("AccentPurple").opacity(0.5), lineWidth: 1)
+                                    )
+                                    
+                                    // Unit picker
+                                    Picker("Unit", selection: $customUnit) {
+                                        Text("Days").tag("days")
+                                        Text("Weeks").tag("weeks")
+                                        Text("Months").tag("months")
+                                        Text("Years").tag("years")
+                                    }
+                                    .pickerStyle(.segmented)
+                                    .tint(Color("AccentPurple"))
+                                    
+                                    // Weekday selector
+                                    if customUnit == "weeks" {
+                                        VStack(alignment: .leading, spacing: 8) {
+                                            Text("On these days")
+                                                .font(.caption.bold())
+                                                .foregroundStyle(Color("MutedLavender"))
+                                            HStack(spacing: 8) {
+                                                ForEach(1...7, id: \.self) { day in
+                                                    let dayNames = ["M", "T", "W", "T", "F", "S", "S"]
+                                                    Button {
+                                                        if customWeekdays.contains(day) {
+                                                            customWeekdays.removeAll { $0 == day }
+                                                        } else {
+                                                            customWeekdays.append(day)
+                                                        }
+                                                    } label: {
+                                                        Text(dayNames[day - 1])
+                                                            .font(.caption.bold())
+                                                            .frame(width: 36, height: 36)
+                                                            .background(customWeekdays.contains(day) ? Color("AccentPurple") : Color("CardBackground"))
+                                                            .foregroundStyle(customWeekdays.contains(day) ? .white : Color("MutedLavender"))
+                                                            .clipShape(Circle())
+                                                            .overlay(
+                                                                Circle()
+                                                                    .strokeBorder(Color("AccentPurple").opacity(0.5), lineWidth: 1)
+                                                            )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
+                                    // Day of month picker
+                                    if customUnit == "months" || customUnit == "years" {
+                                        HStack {
+                                            Text("On day")
+                                                .foregroundStyle(.white)
+                                            Spacer()
+                                            Picker("Day", selection: $customDayOfMonth) {
+                                                ForEach(1...31, id: \.self) { day in
+                                                    Text("\(day)").tag(day)
+                                                }
+                                            }
+                                            .pickerStyle(.menu)
+                                            .tint(Color("AccentPurple"))
+                                        }
+                                        .padding()
+                                        .background(Color("CardBackground"))
+                                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .strokeBorder(Color("AccentPurple").opacity(0.5), lineWidth: 1)
+                                        )
+                                    }
+                                }
+                                .transition(.opacity.combined(with: .move(edge: .top)))
+                                .animation(.easeInOut, value: recurrence)
+                            }
                         }
                         
                         // Reset Time
@@ -219,7 +364,18 @@ struct AddTaskView: View {
     
     func addTask() {
         let times = notificationTimes.prefix(notificationCount).map { $0.timeIntervalSince1970 }
-        let task = Task(name: taskName, recurrence: recurrence, resetTime: notificationTimes.first ?? Date(), targetCount: targetCount, notificationTimes: Array(times))
+        let task = Task(
+            name: taskName,
+            recurrence: recurrence,
+            resetTime: notificationTimes.first ?? Date(),
+            targetCount: targetCount,
+            notificationTimes: Array(times),
+            emoji: emoji.isEmpty ? nil : emoji,
+            customInterval: recurrence == .custom ? customInterval : nil,
+            customUnit: recurrence == .custom ? customUnit : nil,
+            customWeekdays: recurrence == .custom && customUnit == "weeks" ? customWeekdays : [],
+            customDayOfMonth: recurrence == .custom && (customUnit == "months" || customUnit == "years") ? customDayOfMonth : nil
+        )
         modelContext.insert(task)
         NotificationManager.shared.scheduleNotification(for: task)
         dismiss()
