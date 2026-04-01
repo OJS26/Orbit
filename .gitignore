@@ -11,6 +11,9 @@ DerivedData/
 *.mode1v2
 *.mode2v2
 *.perspectivev3
+*.xcuserstate
+.DS_Store
+**/.DS_Store
 
 # SwiftData
 *.sqlite
