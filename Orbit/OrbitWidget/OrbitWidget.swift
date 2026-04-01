@@ -1,6 +1,5 @@
 import WidgetKit
 import SwiftUI
-import SwiftData
 
 struct TaskEntry: TimelineEntry {
     let date: Date
@@ -10,14 +9,15 @@ struct TaskEntry: TimelineEntry {
 struct TaskSnapshot {
     let name: String
     let isCompleted: Bool
+    let emoji: String
 }
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> TaskEntry {
         TaskEntry(date: Date(), tasks: [
-            TaskSnapshot(name: "Brush Teeth", isCompleted: true),
-            TaskSnapshot(name: "Make Bed", isCompleted: false),
-            TaskSnapshot(name: "Stretch", isCompleted: false)
+            TaskSnapshot(name: "Brush Teeth", isCompleted: true, emoji: "🪥"),
+            TaskSnapshot(name: "Make Bed", isCompleted: false, emoji: "🛏️"),
+            TaskSnapshot(name: "Stretch", isCompleted: false, emoji: "🧘")
         ])
     }
     
@@ -35,13 +35,17 @@ struct Provider: TimelineProvider {
     
     func loadTasks() -> [TaskSnapshot] {
         return SharedDataManager.shared.loadTasks().map {
-            TaskSnapshot(name: $0.name, isCompleted: $0.isCompleted)
+            TaskSnapshot(name: $0.name, isCompleted: $0.isCompleted, emoji: $0.emoji)
         }
     }
 }
 
 struct OrbitWidgetEntryView: View {
     var entry: TaskEntry
+    
+    var displayTasks: [TaskSnapshot] {
+        Array(entry.tasks.prefix(entry.tasks.count > 5 ? 10 : 5))
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -54,12 +58,12 @@ struct OrbitWidgetEntryView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } else {
-                ForEach(entry.tasks.prefix(entry.tasks.count > 5 ? 10 : 5), id: \.name) { task in
+                ForEach(displayTasks, id: \.name) { task in
                     HStack(spacing: 6) {
                         Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
                             .foregroundStyle(task.isCompleted ? .green : .gray)
                             .font(.caption)
-                        Text(task.name)
+                        Text("\(task.emoji.isEmpty ? "" : task.emoji + " ")\(task.name)")
                             .font(.caption)
                             .foregroundStyle(task.isCompleted ? .secondary : .primary)
                     }
@@ -84,12 +88,13 @@ struct OrbitWidget: Widget {
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }
+
 #Preview(as: .systemSmall) {
     OrbitWidget()
 } timeline: {
     TaskEntry(date: .now, tasks: [
-        TaskSnapshot(name: "Brush Teeth", isCompleted: true),
-        TaskSnapshot(name: "Make Bed", isCompleted: false),
-        TaskSnapshot(name: "Stretch", isCompleted: false)
+        TaskSnapshot(name: "Brush Teeth", isCompleted: true, emoji: "🪥"),
+        TaskSnapshot(name: "Make Bed", isCompleted: false, emoji: "🛏️"),
+        TaskSnapshot(name: "Stretch", isCompleted: false, emoji: "🧘")
     ])
 }

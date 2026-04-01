@@ -16,3 +16,7 @@ DerivedData/
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal
+Orbit/.DS_Store
+Orbit/Orbit/.DS_Store
+Orbit/Orbit/.DS_Store
+Orbit/Orbit.xcodeproj/project.xcworkspace/xcuserdata/oj.xcuserdatad/UserInterfaceState.xcuserstate

@@ -5,6 +5,7 @@ import Foundation
 struct TaskWidgetData: Codable {
     let name: String
     let isCompleted: Bool
+    let emoji: String
 }
 
 class SharedDataManager {

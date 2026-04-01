@@ -50,9 +50,15 @@ struct TaskRowView: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(task.name)
-                    .font(.headline)
-                    .foregroundStyle(.white)
+                HStack(spacing: 6) {
+                    if let emoji = task.emoji, !emoji.isEmpty {
+                        Text(emoji)
+                            .font(.headline)
+                    }
+                    Text(task.name)
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                }
                 Text(task.isCompletedToday ? task.resetLabel : task.recurrence.rawValue.capitalized)
                     .font(.caption)
                     .foregroundStyle(Color("MutedLavender"))
