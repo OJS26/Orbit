@@ -55,7 +55,7 @@
 		2F7A758E2F76DAAC00337F1F /* Exceptions for "Orbit" folder in "OrbitWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				SharedDataManager.swift,
+				Managers/SharedDataManager.swift,
 			);
 			target = 2F3604892F6C0B4C001D2BF9 /* OrbitWidgetExtension */;
 		};
