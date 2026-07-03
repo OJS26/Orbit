@@ -47,14 +47,19 @@ struct EditTaskView: View {
                                 .font(.caption.bold())
                                 .foregroundStyle(Color("MutedLavender"))
                             HStack(spacing: 0) {
-                                EmojiTextField(text: $emoji)
+                                TextField("😀", text: $emoji)
                                     .frame(width: 52, height: 52)
+                                    .multilineTextAlignment(.center)
+                                    .font(.title2)
                                     .background(Color("SpaceBackground"))
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 12)
                                             .strokeBorder(Color("AccentPurple").opacity(0.5), lineWidth: 1)
                                     )
+                                    .onChange(of: emoji) {
+                                        emoji = String(emoji.prefix(1))
+                                    }
                                 
                                 TextField("e.g. Brush Teeth", text: $taskName)
                                     .padding()
@@ -348,6 +353,9 @@ struct EditTaskView: View {
                         .disabled(taskName.isEmpty)
                     }
                     .padding()
+                }
+                .onTapGesture {
+                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                 }
             }
             .navigationTitle("Edit Task")

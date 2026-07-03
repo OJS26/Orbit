@@ -59,7 +59,7 @@ struct TaskRowView: View {
                         .font(.headline)
                         .foregroundStyle(.white)
                 }
-                Text(task.isCompletedToday ? task.resetLabel : task.recurrence.rawValue.capitalized)
+                Text(task.isCompletedToday ? task.resetLabel : task.recurrenceLabel)
                     .font(.caption)
                     .foregroundStyle(Color("MutedLavender"))
                 if task.streak > 0 {

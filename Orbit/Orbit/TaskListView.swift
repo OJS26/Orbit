@@ -57,9 +57,6 @@ struct TaskListView: View {
                             SharedDataManager.shared.saveTasks(widgetData)
                             WidgetCenter.shared.reloadAllTimelines()
                         }
-                        .listStyle(.plain)
-                        .scrollContentBackground(.hidden)
-                        .animation(.easeInOut(duration: 0.4), value: sortedTasks.map { $0.isCompletedToday })
                     }
                 }
             }
