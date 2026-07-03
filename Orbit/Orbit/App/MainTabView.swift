@@ -9,6 +9,11 @@ struct MainTabView: View {
                     Label("Habits", systemImage: "checkmark.circle")
                 }
             
+            StreaksView()
+                .tabItem {
+                    Label("Streaks", systemImage: "flame")
+                }
+            
             ToDoView()
                 .tabItem {
                     Label("To Do", systemImage: "list.bullet")

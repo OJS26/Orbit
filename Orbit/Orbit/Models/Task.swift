@@ -13,6 +13,7 @@ class Task: Identifiable {
     var targetCount: Int
     var notificationTimes: [TimeInterval]
     var streak: Int
+    var completionHistory: [TimeInterval]
     var emoji: String?
     var customInterval: Int?
     var customUnit: String?
@@ -29,6 +30,7 @@ class Task: Identifiable {
         self.targetCount = targetCount
         self.notificationTimes = notificationTimes
         self.streak = 0
+        self.completionHistory = []
         self.emoji = emoji
         self.customInterval = customInterval
         self.customUnit = customUnit
@@ -199,30 +201,35 @@ class Task: Identifiable {
             let todayReset = calendar.date(from: components)!
             if now >= todayReset && lastCompletion < todayReset {
                 streak = isCompletedToday ? streak + 1 : 0
+                completionHistory.append(contentsOf: completedDates)
                 completedDates.removeAll()
             }
         case .weekly:
             let nextReset = calendar.date(byAdding: .weekOfYear, value: 1, to: resetTime)!
             if now >= nextReset && lastCompletion < nextReset {
                 streak = isCompletedToday ? streak + 1 : 0
+                completionHistory.append(contentsOf: completedDates)
                 completedDates.removeAll()
             }
         case .biWeekly:
             let nextReset = calendar.date(byAdding: .weekOfYear, value: 2, to: resetTime)!
             if now >= nextReset && lastCompletion < nextReset {
                 streak = isCompletedToday ? streak + 1 : 0
+                completionHistory.append(contentsOf: completedDates)
                 completedDates.removeAll()
             }
         case .monthly:
             let nextReset = calendar.date(byAdding: .month, value: 1, to: resetTime)!
             if now >= nextReset && lastCompletion < nextReset {
                 streak = isCompletedToday ? streak + 1 : 0
+                completionHistory.append(contentsOf: completedDates)
                 completedDates.removeAll()
             }
         case .yearly:
             let nextReset = calendar.date(byAdding: .year, value: 1, to: resetTime)!
             if now >= nextReset && lastCompletion < nextReset {
                 streak = isCompletedToday ? streak + 1 : 0
+                completionHistory.append(contentsOf: completedDates)
                 completedDates.removeAll()
             }
         case .custom:
@@ -238,6 +245,7 @@ class Task: Identifiable {
             let nextReset = calendar.date(byAdding: component, value: interval, to: resetTime)!
             if now >= nextReset && lastCompletion < nextReset {
                 streak = isCompletedToday ? streak + 1 : 0
+                completionHistory.append(contentsOf: completedDates)
                 completedDates.removeAll()
             }
         }
