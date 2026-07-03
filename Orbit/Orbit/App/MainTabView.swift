@@ -25,5 +25,5 @@ struct MainTabView: View {
 
 #Preview {
     MainTabView()
-        .modelContainer(for: [Task.self, ToDoItem.self], inMemory: true)
+        .modelContainer(for: [HabitTask.self, ToDoItem.self], inMemory: true)
 }

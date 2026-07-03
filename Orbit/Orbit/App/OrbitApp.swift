@@ -23,7 +23,7 @@ struct OrbitApp: App {
             }
             .ignoresSafeArea()
         }
-        .modelContainer(for: [Task.self, ToDoItem.self])
+        .modelContainer(for: [HabitTask.self, ToDoItem.self])
     }
     
     func requestNotificationPermission() {

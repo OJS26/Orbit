@@ -3,7 +3,7 @@ import Foundation
 import SwiftData
 
 @Model
-class Task: Identifiable {
+class HabitTask: Identifiable {
     var id: UUID
     var name: String
     var recurrence: Recurrence

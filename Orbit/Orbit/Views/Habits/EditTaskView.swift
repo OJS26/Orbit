@@ -3,10 +3,10 @@ import SwiftData
 
 struct EditTaskView: View {
     @Environment(\.dismiss) private var dismiss
-    let task: Task
+    let task: HabitTask
     
     @State private var taskName: String
-    @State private var recurrence: Task.Recurrence
+    @State private var recurrence: HabitTask.Recurrence
     @State private var resetTime: Date
     @State private var targetCount: Int
     @State private var notificationCount: Int
@@ -17,7 +17,7 @@ struct EditTaskView: View {
     @State private var customWeekdays: [Int]
     @State private var customDayOfMonth: Int
     
-    init(task: Task) {
+    init(task: HabitTask) {
         self.task = task
         _taskName = State(initialValue: task.name)
         _recurrence = State(initialValue: task.recurrence)
@@ -81,12 +81,12 @@ struct EditTaskView: View {
                                 .foregroundStyle(Color("MutedLavender"))
                             
                             Picker("Recurrence", selection: $recurrence) {
-                                Text("Daily").tag(Task.Recurrence.daily)
-                                Text("Weekly").tag(Task.Recurrence.weekly)
-                                Text("Bi-Weekly").tag(Task.Recurrence.biWeekly)
-                                Text("Monthly").tag(Task.Recurrence.monthly)
-                                Text("Yearly").tag(Task.Recurrence.yearly)
-                                Text("Custom").tag(Task.Recurrence.custom)
+                                Text("Daily").tag(HabitTask.Recurrence.daily)
+                                Text("Weekly").tag(HabitTask.Recurrence.weekly)
+                                Text("Bi-Weekly").tag(HabitTask.Recurrence.biWeekly)
+                                Text("Monthly").tag(HabitTask.Recurrence.monthly)
+                                Text("Yearly").tag(HabitTask.Recurrence.yearly)
+                                Text("Custom").tag(HabitTask.Recurrence.custom)
                             }
                             .pickerStyle(.menu)
                             .tint(Color("AccentPurple"))

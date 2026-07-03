@@ -5,11 +5,11 @@ import SwiftData
 import WidgetKit
 
 struct TaskListView: View {
-    @Query private var tasks: [Task]
+    @Query private var tasks: [HabitTask]
     @Environment(\.modelContext) private var modelContext
     @State private var showingAddTask = false
     
-    var sortedTasks: [Task] {
+    var sortedTasks: [HabitTask] {
         tasks.sorted { first, second in
             if first.isCompletedToday == second.isCompletedToday {
                 return first.createdAt < second.createdAt
@@ -48,12 +48,12 @@ struct TaskListView: View {
                         .animation(.easeInOut(duration: 0.4), value: sortedTasks.map { $0.isCompletedToday })
                         .onAppear {
                             tasks.forEach { $0.resetIfNeeded() }
-                            let widgetData = tasks.map { TaskWidgetData(name: $0.name, isCompleted: $0.isCompletedToday, emoji: $0.emoji ?? "") }
+                            let widgetData = tasks.map { TaskWidgetData(id: $0.id.uuidString, name: $0.name, isCompleted: $0.isCompletedToday, emoji: $0.emoji ?? "") }
                             SharedDataManager.shared.saveTasks(widgetData)
                             WidgetCenter.shared.reloadAllTimelines()
                         }
                         .onChange(of: tasks.map { $0.isCompletedToday }) {
-                            let widgetData = tasks.map { TaskWidgetData(name: $0.name, isCompleted: $0.isCompletedToday, emoji: $0.emoji ?? "") }
+                            let widgetData = tasks.map { TaskWidgetData(id: $0.id.uuidString, name: $0.name, isCompleted: $0.isCompletedToday, emoji: $0.emoji ?? "") }
                             SharedDataManager.shared.saveTasks(widgetData)
                             WidgetCenter.shared.reloadAllTimelines()
                         }
@@ -98,5 +98,5 @@ struct TaskListView: View {
 
 #Preview {
     TaskListView()
-        .modelContainer(for: Task.self, inMemory: true)
+        .modelContainer(for: HabitTask.self, inMemory: true)
 }

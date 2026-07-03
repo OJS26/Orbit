@@ -3,7 +3,7 @@ import SwiftData
 
 struct TaskRowView: View {
     @Environment(\.modelContext) private var modelContext
-    let task: Task
+    let task: HabitTask
     @State private var showBurst = false
     @State private var particles: [(id: UUID, angle: Double, distance: Double)] = []
     @State private var showingEditTask = false
@@ -125,8 +125,8 @@ struct TaskRowView: View {
 }
 
 #Preview {
-    TaskRowView(task: Task(name: "Brush Teeth", recurrence: .daily))
-        .modelContainer(for: Task.self, inMemory: true)
+    TaskRowView(task: HabitTask(name: "Brush Teeth", recurrence: .daily))
+        .modelContainer(for: HabitTask.self, inMemory: true)
         .padding()
         .background(Color("SpaceBackground"))
 }

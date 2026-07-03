@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct StreaksView: View {
-    @Query private var tasks: [Task]
+    @Query private var tasks: [HabitTask]
     
     var body: some View {
         NavigationStack {
@@ -60,5 +60,5 @@ struct StreaksView: View {
 
 #Preview {
     StreaksView()
-        .modelContainer(for: Task.self, inMemory: true)
+        .modelContainer(for: HabitTask.self, inMemory: true)
 }

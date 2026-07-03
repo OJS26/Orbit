@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 struct ToDoView: View {
     @Query private var items: [ToDoItem]
@@ -101,8 +102,18 @@ struct ToDoView: View {
                                 }
                             }
                         }
-                        .listStyle(.plain)
-                        .scrollContentBackground(.hidden)
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
+                    .onAppear {
+                    let toDoData = items.filter { !$0.isCompleted }.map { ToDoWidgetData(id: $0.id.uuidString, title: $0.title, isCompleted: $0.isCompleted, tag: $0.tag) }
+                    SharedDataManager.shared.saveToDoItems(toDoData)
+                    WidgetCenter.shared.reloadAllTimelines()
+                    }
+                    .onChange(of: items.map { $0.isCompleted }) {
+                    let toDoData = items.filter { !$0.isCompleted }.map { ToDoWidgetData(id: $0.id.uuidString, title: $0.title, isCompleted: $0.isCompleted, tag: $0.tag) }
+                    SharedDataManager.shared.saveToDoItems(toDoData)
+                    WidgetCenter.shared.reloadAllTimelines()
+                        }
                     }
                 }
             }

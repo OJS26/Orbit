@@ -56,6 +56,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Managers/SharedDataManager.swift,
+				Models/HabitTask.swift,
+				Models/ToDoItem.swift,
 			);
 			target = 2F3604892F6C0B4C001D2BF9 /* OrbitWidgetExtension */;
 		};

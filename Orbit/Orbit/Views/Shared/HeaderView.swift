@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct HeaderView: View {
-    let tasks: [Task]
+    let tasks: [HabitTask]
     
     var totalProgress: Double {
         tasks.reduce(0.0) { $0 + min(Double($1.completionsToday) / Double($1.targetCount), 1.0) }

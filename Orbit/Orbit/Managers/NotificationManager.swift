@@ -6,7 +6,7 @@ import UserNotifications
 class NotificationManager {
     static let shared = NotificationManager()
     
-    func scheduleNotification(for task: Task) {
+    func scheduleNotification(for task: HabitTask) {
         removeNotification(for: task)
         
         for (index, interval) in task.notificationTimes.enumerated() {
@@ -32,12 +32,12 @@ class NotificationManager {
         }
     }
 
-    func removeNotification(for task: Task) {
+    func removeNotification(for task: HabitTask) {
         let identifiers = task.notificationTimes.enumerated().map { "\(task.id.uuidString)-\($0.offset)" }
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
     }
         
-        func rescheduleAll(tasks: [Task]) {
+        func rescheduleAll(tasks: [HabitTask]) {
             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
             tasks.forEach { scheduleNotification(for: $0) }
         }

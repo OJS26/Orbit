@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct StreakCardView: View {
-    let task: Task
+    let task: HabitTask
     
     var allCompletionDates: [Date] {
         let historical = task.completionHistory.map { Date(timeIntervalSince1970: $0) }
@@ -221,8 +221,8 @@ struct StreakCardView: View {
 }
 
 #Preview {
-    StreakCardView(task: Task(name: "Brush Teeth", recurrence: .daily))
+    StreakCardView(task: HabitTask(name: "Brush Teeth", recurrence: .daily))
         .padding()
         .background(Color("SpaceBackground"))
-        .modelContainer(for: Task.self, inMemory: true)
+        .modelContainer(for: HabitTask.self, inMemory: true)
 }

@@ -6,7 +6,7 @@ struct AddTaskView: View {
     @Environment(\.dismiss) private var dismiss
     
     @State private var taskName = ""
-    @State private var recurrence = Task.Recurrence.daily
+    @State private var recurrence = HabitTask.Recurrence.daily
     @State private var resetTime = Calendar.current.startOfDay(for: Date())
     @State private var targetCount = 1
     @State private var notificationCount = 1
@@ -74,12 +74,12 @@ struct AddTaskView: View {
                                 .foregroundStyle(Color("MutedLavender"))
                             
                             Picker("Recurrence", selection: $recurrence) {
-                                Text("Daily").tag(Task.Recurrence.daily)
-                                Text("Weekly").tag(Task.Recurrence.weekly)
-                                Text("Bi-Weekly").tag(Task.Recurrence.biWeekly)
-                                Text("Monthly").tag(Task.Recurrence.monthly)
-                                Text("Yearly").tag(Task.Recurrence.yearly)
-                                Text("Custom").tag(Task.Recurrence.custom)
+                                Text("Daily").tag(HabitTask.Recurrence.daily)
+                                Text("Weekly").tag(HabitTask.Recurrence.weekly)
+                                Text("Bi-Weekly").tag(HabitTask.Recurrence.biWeekly)
+                                Text("Monthly").tag(HabitTask.Recurrence.monthly)
+                                Text("Yearly").tag(HabitTask.Recurrence.yearly)
+                                Text("Custom").tag(HabitTask.Recurrence.custom)
                             }
                             .pickerStyle(.menu)
                             .tint(Color("AccentPurple"))
@@ -372,7 +372,7 @@ struct AddTaskView: View {
     
     func addTask() {
         let times = notificationTimes.prefix(notificationCount).map { $0.timeIntervalSince1970 }
-        let task = Task(
+        let task = HabitTask(
             name: taskName,
             recurrence: recurrence,
             resetTime: notificationTimes.first ?? Date(),
